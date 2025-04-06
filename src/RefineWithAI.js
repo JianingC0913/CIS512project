@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect, useRef } from "react";
+import { useLocation } from 'react-router-dom';
 import html2canvas from "html2canvas";
 
 import CharacterPreview from './CharacterPreview';
@@ -52,6 +53,8 @@ const RefineWithAI = () => {
     const previewRef = useRef();
     const [maskData, setMaskData] = useState([]);
     const [selectedMask, setSelectedMask] = useState(null);
+    const location = useLocation();
+    const selections = location.state?.selections;
       
     
   const [instruction, setInstruction] = useState('');
@@ -62,85 +65,90 @@ const RefineWithAI = () => {
     clothes: 0,
   });
 
-  useEffect(() => {
-    const captureAndSegment = async () => {
-      const canvas = await html2canvas(previewRef.current, {
-        useCORS: true,
-        backgroundColor: "#D9A2F4",
-        scale: 2 // for higher resolution
-      });
+//   useEffect(() => {
+//     // const captureAndSegment = async () => {
+//     //   const canvas = await html2canvas(previewRef.current, {
+//     //     useCORS: true,
+//     //     backgroundColor: "#D9A2F4",
+//     //     scale: 2 // for higher resolution
+//     //   });
   
-      document.body.appendChild(canvas); 
-      const blob = await new Promise((res) => canvas.toBlob(res, "image/png"));
-      const formData = new FormData();
-      formData.append("file", blob, "preview.png");
+//     //   document.body.appendChild(canvas); 
+//     //   const blob = await new Promise((res) => canvas.toBlob(res, "image/png"));
+//     //   const formData = new FormData();
+//     //   formData.append("file", blob, "preview.png");
   
-      const res = await fetch("http://localhost:8000/segment", {
-        method: "POST",
-        body: formData,
-      });
+//     //   const res = await fetch("http://localhost:8000/segment", {
+//     //     method: "POST",
+//     //     body: formData,
+//     //   });
   
-      const data = await res.json();
-      setMaskData(data.masks);
-    };
+//     //   const data = await res.json();
+//     //   setMaskData(data.masks);
+//     // };
   
-    captureAndSegment();
-  }, [features]);
+//     // captureAndSegment();
+//   }, [features]);
   
 
-  return (
-    <div className="flex w-full h-full gap-6 px-4 py-2">
-      {/* Left Panel - Character Preview */}
-      <div
-        ref={previewRef}
-        className="relative w-[500px] h-[585px] bg-foreground rounded-2xl p-4 flex justify-center items-center border-4 border-black"
+
+return (
+    <div className="flex flex-col items-center gap-8 p-8">
+      <h1 className="text-5xl font-bold">Refine With AI ✨</h1>
+      <div className="flex gap-36 bg-[#f4f3fd] p-10 rounded-3xl shadow-lg w-[1000px]">
+        
+        {/* Character Preview with overlay masks */}
+        <div
+          ref={previewRef}
+          className="relative w-[320px] h-[600px] flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white"
         >
-        <CharacterPreview selections={selections} />
-
-        {/* Overlay clickable mask boxes */}
-        {maskData.map((mask) => (
+          {selections && <CharacterPreview selections={selections} />}
+  
+          {/* Overlay clickable mask boxes */}
+          {maskData.map((mask) => (
             <div
-            key={mask.id}
-            className={`absolute z-50 bg-blue-300/30 border-2 ${
+              key={mask.id}
+              className={`absolute z-50 bg-blue-300/30 border-2 ${
                 selectedMask?.id === mask.id ? "border-blue-500" : "border-transparent"
-            } cursor-pointer`}
-            onClick={() => setSelectedMask(mask)}
-            style={{
+              } cursor-pointer`}
+              onClick={() => setSelectedMask(mask)}
+              style={{
                 left: `${mask.bbox[0]}px`,
                 top: `${mask.bbox[1]}px`,
                 width: `${mask.bbox[2]}px`,
                 height: `${mask.bbox[3]}px`,
-            }}
+              }}
             />
-        ))}
+          ))}
         </div>
-
-
-      {/* Right Panel - Options and Buttons */}
-      <div className="flex-1 bg-white border-4 border-foreground rounded-2xl p-4 flex flex-col justify-between shadow-md">
-        
-
-        {/* Textbox for instructions */}
-        <div className="flex-1 border-4 border-black rounded-xl p-3">
-          <textarea
-            value={instruction}
-            onChange={(e) => setInstruction(e.target.value)}
-            placeholder="Describe what you'd like to change (e.g. 'Make the hair longer'), select the region you want to change, then click Refine With AI button to refine."
-            className="w-full h-full bg-transparent resize-none outline-none text-lg"
-          />
-        </div>
-        {/* Button Panel */}
-        <div className="flex justify-center gap-4 mt-4">
+  
+        {/* Instructions and Refine Button Panel */}
+        <div className="flex flex-col gap-10 items-center w-[400px]">
+          
+          {/* Textarea for user instruction */}
+          <div className="w-[500px] h-[320px] border-4 border-black rounded-xl p-4 bg-white shadow-inner">
+            <textarea
+              value={instruction}
+              onChange={(e) => setInstruction(e.target.value)}
+              placeholder="Describe what you'd like to change (e.g. 'Make the hair longer'), select the region you want to change, then click Refine button to refine."
+              className="w-full h-full bg-transparent resize-none outline-none text-lg"
+            />
+          </div>
+  
+          {/* Refine Button */}
+          <div className="flex justify-center gap-4 mt-2 w-[500px] h-[100px]">
             <ButtonPanelforAI
-                features={features}
-                setFeatures={setFeatures}
-                selectedMask={selectedMask}
-                instruction={instruction}
+              features={features}
+              setFeatures={setFeatures}
+              selectedMask={selectedMask}
+              instruction={instruction}
             />
+          </div>
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default RefineWithAI;

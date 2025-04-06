@@ -9,12 +9,11 @@ const ButtonPanelforAI = ({ setFeatures }) => {
   return (
     <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
       <button className="rounded-full border-4 border-accentTeal bg-background px-6 py-2 font-aclonica text-lg hover:bg-accentTeal/30 transition">
-        Save
+       💾 Save
       </button>
       <button 
-       onClick={() => navigate('/refine')}
        className="rounded-full border-4 border-accentRed bg-background px-6 py-2 font-aclonica text-lg hover:bg-accentRed/30 transition">
-        Refine with AI
+       ✨ Refine 
       </button>
       <button
         className="rounded-full border-4 border-accentRed bg-background text-black px-6 py-2 font-aclonica text-lg hover:bg-accentRed/30 transition"
