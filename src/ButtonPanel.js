@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ButtonPanel = ({ setFeatures }) => {
+  const navigate = useNavigate();
+
   const randomize = () => {
     setFeatures({
       eyes: Math.floor(Math.random() * 3),
@@ -21,7 +24,9 @@ const ButtonPanel = ({ setFeatures }) => {
       <button className="rounded-full border-4 border-accentTeal bg-background px-6 py-2 font-aclonica text-lg hover:bg-accentTeal/30 transition">
         Save & Share
       </button>
-      <button className="rounded-full border-4 border-accentRed bg-background px-6 py-2 font-aclonica text-lg hover:bg-accentRed/30 transition">
+      <button 
+       onClick={() => navigate('/refine')}
+       className="rounded-full border-4 border-accentRed bg-background px-6 py-2 font-aclonica text-lg hover:bg-accentRed/30 transition">
         Refine with AI
       </button>
     </div>
