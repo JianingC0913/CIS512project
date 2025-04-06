@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import CharacterPreview from './CharacterPreview';
 import FeatureOptions from './FeatureOptions';
+import { useNavigate } from 'react-router-dom';
 // import ButtonPanel from './ButtonPanel';
 
 // Tab icons
@@ -57,6 +58,8 @@ import decor4 from './assets/features/accessories/decor4.svg';
 import decor5 from './assets/features/accessories/decor5.svg';
 import decor6 from './assets/features/accessories/decor6.svg';
 
+
+
 // Tabs (skin goes first)
 const TABS = [
   { id: 'skin', icon: skinIcon },
@@ -90,6 +93,7 @@ const OCBuilder = () => {
     clothes: clothes1,
     accessories: decor1,
   });
+  const navigate = useNavigate();
 
   const handleSaveImage = () => {
     if (!previewRef.current) return;
@@ -119,7 +123,8 @@ const OCBuilder = () => {
   };
 
   const handleRefine = () => {
-    alert('✨ Refine with AI coming soon!');
+    // alert('✨ Refine with AI coming soon!');
+    navigate('/refine', { state: { selections } });
   };
 
   return (
