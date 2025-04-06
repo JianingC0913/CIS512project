@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import CharacterPreview from './CharacterPreview';
 import FeatureOptions from './FeatureOptions';
 // import ButtonPanel from './ButtonPanel';
@@ -79,6 +80,7 @@ const featureOptions = {
 const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 const OCBuilder = () => {
+  const previewRef = useRef(null);
   const [selectedTab, setSelectedTab] = useState('skin');
   const [selections, setSelections] = useState({
     skin: skin1,
@@ -88,6 +90,21 @@ const OCBuilder = () => {
     clothes: clothes1,
     accessories: decor1,
   });
+
+  const handleSaveImage = () => {
+    if (!previewRef.current) return;
+  
+    html2canvas(previewRef.current, {
+      backgroundColor: null,
+      useCORS: true,
+      scale: 2,
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'oc.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  };
 
   const handleSelect = (feature, index) => {
     setSelections(prev => ({ ...prev, [feature]: featureOptions[feature][index] }));
@@ -111,7 +128,10 @@ const OCBuilder = () => {
       <div className="flex gap-10 bg-[#f4f3fd] p-10 rounded-3xl shadow-lg">
         
         {/* Character Preview */}
-        <div className="w-[320px] h-[500px] flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white">
+        <div
+          className="w-[320px] h-[600px] flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white"
+          ref={previewRef}
+        >
           <CharacterPreview selections={selections} />
         </div>
   
@@ -152,8 +172,8 @@ const OCBuilder = () => {
               🎲 Random Generate
             </button>
             <button
-              onClick={() => {}}
-              className="border-4 border-[#55D6C2] px-6 py-2 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold"
+              onClick={handleSaveImage}
+              className="border-4 border-[#F5E960] text-[#B59E00] px-6 py-2 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold"
             >
               💾 Save & Share
             </button>
