@@ -91,14 +91,11 @@ const RefineWithAI = () => {
   return (
     <div className="flex w-full h-full gap-6 px-4 py-2">
       {/* Left Panel - Character Preview */}
-      {/* <div className="w-[500px] h-[585px] bg-foreground rounded-2xl p-4 flex justify-center items-center border-4 border-black">
-        <CharacterPreview features={features} />
-      </div> */}
       <div
         ref={previewRef}
         className="relative w-[500px] h-[585px] bg-foreground rounded-2xl p-4 flex justify-center items-center border-4 border-black"
         >
-        <CharacterPreview features={features} />
+        <CharacterPreview selections={selections} />
 
         {/* Overlay clickable mask boxes */}
         {maskData.map((mask) => (
