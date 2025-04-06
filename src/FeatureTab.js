@@ -1,13 +1,5 @@
 import React from 'react';
 
-const tabs = [
-  { id: 'eyes', icon: '👁️' },
-  { id: 'mouth', icon: '👄' },
-  { id: 'hair', icon: '🧑‍🎤' },
-  { id: 'clothes', icon: '👗' },
-  { id: 'more', icon: '⋯' },
-];
-
 const FeatureTab = ({ selected, onSelect }) => {
   return (
     <div className="flex space-x-3 mb-4 justify-center">

@@ -1,33 +1,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ButtonPanel = ({ setFeatures }) => {
-  const navigate = useNavigate();
-
-  const randomize = () => {
-    setFeatures({
-      eyes: Math.floor(Math.random() * 3),
-      mouth: Math.floor(Math.random() * 3),
-      hair: Math.floor(Math.random() * 3),
-      clothes: Math.floor(Math.random() * 2),
-    });
-  };
-
+const ButtonPanel = ({ onRandomize, onSave, onRefine }) => {
   return (
-    <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+    <div className="flex gap-4 mt-4">
       <button
-        onClick={randomize}
-        className="rounded-full border-4 border-foreground bg-background px-6 py-2 font-aclonica text-lg hover:bg-foreground/30 transition"
+        onClick={onRandomize}
+        className="bg-purple-600 text-white px-6 py-3 rounded-2xl shadow hover:bg-purple-700"
       >
-        Random Generate
+        🎲 Random Generate
       </button>
-      <button className="rounded-full border-4 border-accentTeal bg-background px-6 py-2 font-aclonica text-lg hover:bg-accentTeal/30 transition">
-        Save & Share
+      <button
+        onClick={onSave}
+        className="bg-yellow-400 text-black px-6 py-3 rounded-2xl shadow hover:bg-yellow-300"
+      >
+        💾 Save & Share
       </button>
-      <button 
-       onClick={() => navigate('/refine')}
-       className="rounded-full border-4 border-accentRed bg-background px-6 py-2 font-aclonica text-lg hover:bg-accentRed/30 transition">
-        Refine with AI
+      <button
+        onClick={onRefine}
+        className="bg-pink-500 text-white px-6 py-3 rounded-2xl shadow hover:bg-pink-600"
+      >
+        ✨ Refine with AI
       </button>
     </div>
   );
