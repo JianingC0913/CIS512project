@@ -13,6 +13,7 @@ Draw a rectangle over the area you want to refine.
 Enter an instruction (e.g., "Add a rose to this hand").
 
 Click ✨ Refine.
+
 <img width="710" alt="Screenshot 2025-04-07 at 3 07 23 PM" src="https://github.com/user-attachments/assets/2469b965-f287-477e-80bb-8104ff3504ce" />
 
 
