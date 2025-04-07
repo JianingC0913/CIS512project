@@ -1,5 +1,5 @@
 # 🧸 Build Your Original Character
-# AI-Powered Character Customization Web App
+## AI-Powered Character Customization Web App
 
 **Build Your OC** is a fun and interactive web app that lets users design original characters (OCs) by customizing layered SVG features and refining specific parts of their character using AI-powered image editing. Simply drag a box over a region and describe how you want to change it — our app takes care of the rest ✨.
 
@@ -41,13 +41,13 @@ Click ✨ Refine.
 ```
 git clone https://github.com/your-username/build-your-oc.git
 cd build-your-oc
-🧩 Frontend Setup (/frontend)
 
+🧩 Frontend Setup (/src)
 📦 Install Dependencies and Start the React App
 cd src
 npm install
 npm start
-Open your browser to http://localhost:3000
+
 
 🧠 Backend Setup (/backend)
 📦 Install Dependencies
@@ -55,7 +55,8 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-Make sure your .env file exists in /backend and contains:
+
+📦 Make sure your .env file exists in /backend and contains:
 OPENAI_API_KEY=sk-...
 
 
