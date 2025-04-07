@@ -1,86 +1,56 @@
-# import os
-# import sys
-# from pathlib import Path
+from fastapi import FastAPI, UploadFile, Form
+from fastapi.middleware.cors import CORSMiddleware
+from openai import OpenAI
+from dotenv import load_dotenv
+from PIL import Image, ImageDraw
+import os
+import io
+import json
 
-# # Set PYTHONPATH programmatically for Hydra
-# sys.path.append(str(Path(__file__).resolve().parents[2] / "samv2"))
-# os.environ["PYTHONPATH"] = os.environ.get("PYTHONPATH", "") + ":" + str(Path(__file__).resolve().parents[2] / "samv2")
+load_dotenv()
+app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# import sys
-# from pathlib import Path
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# # Add root path so samv2 is resolvable
-# sys.path.append(str(Path(__file__).resolve().parents[2]))
+@app.post("/refine")
+async def refine_with_ai(file: UploadFile, instruction: str = Form(...), box: str = Form(...)):
+    contents = await file.read()
+    image = Image.open(io.BytesIO(contents)).convert("RGBA")
+    image.save("input.png")
 
-# from fastapi import FastAPI, File, UploadFile
-# from fastapi.middleware.cors import CORSMiddleware
-# from PIL import Image
-# import io
-# import numpy as np
+    # Parse selection box JSON from frontend
+    selection_box = json.loads(box)
 
-# # Correct relative import from samv2 local
-# from samv2.sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
-# from samv2.sam2.build_sam import load_model
+    # Create full-size black mask
+    mask = Image.new("L", image.size, 0)
+    draw = ImageDraw.Draw(mask)
+    draw.rectangle(
+        [
+            selection_box["x"] * 2,
+            selection_box["y"] * 2,
+            (selection_box["x"] + selection_box["width"]) * 2,
+            (selection_box["y"] + selection_box["height"]) * 2,
+        ],
+        fill=255
+    )
+    mask.save("mask.png")
 
+    # Call OpenAI image edit API with mask
+    response = client.images.edit(
+        image=open("input.png", "rb"),
+        mask=open("mask.png", "rb"),
+        prompt=instruction,
+        n=1,
+        size="512x512",
+        response_format="url",
+    )
 
-# import os
-# import requests
-
-# # Make sure the artifacts directory exists
-# os.makedirs("artifacts", exist_ok=True)
-
-# # Download SAMv2 Tiny checkpoint
-# url = "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_tiny.pt"
-# dest = "artifacts/sam2_hiera_tiny.pt"
-
-# if not os.path.exists(dest):
-#     print("⬇️ Downloading SAMv2 Tiny checkpoint...")
-#     response = requests.get(url, stream=True)
-#     with open(dest, "wb") as f:
-#         for chunk in response.iter_content(chunk_size=8192):
-#             f.write(chunk)
-#     print("✅ Download complete: artifacts/sam2_hiera_tiny.pt")
-# else:
-#     print("✅ Checkpoint already exists.")
-
-
-# app = FastAPI()
-
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-# # Load SAMv2 model
-# model = load_model(
-#     variant="tiny",
-#     ckpt_path="./artifacts/sam2_hiera_tiny.pt",
-#     device="cpu"
-# )
-# mask_generator = SAM2AutomaticMaskGenerator(model)
-
-# from samv2.sam2.utils.amg import rle_to_mask
-
-# @app.post("/segment")
-# async def segment_image(file: UploadFile = File(...)):
-#     contents = await file.read()
-#     image = np.array(Image.open(io.BytesIO(contents)).convert("RGB"))
-
-#     masks = mask_generator.generate(image)
-
-#     simplified_masks = []
-#     for i, m in enumerate(masks):
-#         binary_mask = rle_to_mask(m["segmentation"]).astype(np.uint8)
-#         simplified_masks.append({
-#             "id": i,
-#             "bbox": m["bbox"],
-#             "area": m["area"],
-#             "mask": binary_mask.tolist()  # Send full mask as nested list
-#         })
-
-#     return {"masks": simplified_masks}
-
+    return {"url": response.data[0].url}
