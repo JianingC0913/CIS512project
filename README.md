@@ -44,14 +44,12 @@ cd CIS512project
 
 🧩 Frontend Setup (/src)
 📦 Install Dependencies and Start the React App
-cd src
 npm install
 npm start
 
 
 🧠 Backend Setup (/backend)
 📦 Install Dependencies
-cd backend
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -61,7 +59,7 @@ OPENAI_API_KEY=sk-...
 
 
 ▶️ Start the FastAPI Server
-uvicorn main:app --reload
+uvicorn src.backend.main:app --reload
 ``` 
 
 
