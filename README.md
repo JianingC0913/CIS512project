@@ -39,8 +39,8 @@ Click ✨ Refine.
 ### 1. Clone the Repository
 
 ```
-git clone https://github.com/your-username/build-your-oc.git
-cd build-your-oc
+git clone https://github.com/JianingC0913/CIS512project.git
+cd CIS512project
 
 🧩 Frontend Setup (/src)
 📦 Install Dependencies and Start the React App
