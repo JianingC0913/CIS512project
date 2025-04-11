@@ -14,7 +14,7 @@ const ButtonPanel = ({ onRandomize, onSave, onRefine }) => {
         onClick={onSave}
         className="bg-yellow-400 text-black px-6 py-3 rounded-2xl shadow hover:bg-yellow-300"
       >
-        💾 Save & Share
+        💾 Save
       </button>
       <button
         onClick={onRefine}
