@@ -1,9 +1,9 @@
+import os
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 from dotenv import load_dotenv
 from PIL import Image, ImageDraw
-import os
 import io
 import json
 
@@ -12,45 +12,56 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # adjust as needed for your deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Instantiate the OpenAI client using the new interface.
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-@app.post("/refine")
-async def refine_with_ai(file: UploadFile, instruction: str = Form(...), box: str = Form(...)):
+
+@app.post("/refine-image-chat")
+async def refine_image_chat(file: UploadFile, instruction: str = Form(...)):
+    """
+    This endpoint receives an image and an instruction.
+    It saves the image, simulates generating a caption from it, builds a prompt,
+    then calls the OpenAI chat API to generate a self-introduction story for the character.
+    """
+    # Read and process the uploaded image.
     contents = await file.read()
     image = Image.open(io.BytesIO(contents)).convert("RGBA")
-    image.save("input.png")
+    image.save("input_chat.png")
 
-    # Parse selection box JSON from frontend
-    selection_box = json.loads(box)
-
-    # Create full-size black mask
-    mask = Image.new("L", image.size, 0)
-    draw = ImageDraw.Draw(mask)
-    draw.rectangle(
-        [
-            selection_box["x"] * 2,
-            selection_box["y"] * 2,
-            (selection_box["x"] + selection_box["width"]) * 2,
-            (selection_box["y"] + selection_box["height"]) * 2,
-        ],
-        fill=255
-    )
-    mask.save("mask.png")
-
-    # Call OpenAI image edit API with mask
-    response = client.images.edit(
-        image=open("input.png", "rb"),
-        mask=open("mask.png", "rb"),
-        prompt=instruction,
-        n=1,
-        size="512x512",
-        response_format="url",
+    # Here you would normally generate a caption from the image.
+    # For our example, we simulate the caption:
+    image_caption = (
+        "A vibrant character with unique features, exuding confidence and creativity."
     )
 
-    return {"url": response.data[0].url}
+    # Build a prompt that uses the generated caption and the user's instruction.
+    prompt = (
+        f"Using the character image description:\n'{image_caption}'\n"
+        f"and the instruction: '{instruction}',\n"
+        "generate a creative self-introduction story for the character."
+    )
+
+    try:
+        # Call the ChatCompletion API using the new client interface.
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a creative assistant that generates self-introduction stories based on a character image."
+                },
+                {"role": "user", "content": prompt},
+            ],
+        )
+        # Extract the generated text.
+        story = completion.choices[0].message.content.strip()
+    except Exception as e:
+        story = f"Error occurred: {e}"
+
+    return {"text": story}
