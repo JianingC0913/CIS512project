@@ -1,175 +1,182 @@
-
 import React, { useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import CharacterPreview from "./CharacterPreview";
-import ButtonPanelforAI from "./ButtonPanelforAI";
 
 const RefineWithAI = () => {
+  const navigate = useNavigate();
   const previewRef = useRef();
-  const [instruction, setInstruction] = useState("");
-  const [features, setFeatures] = useState({ eyes: 0, mouth: 0, hair: 0, clothes: 0 });
   const location = useLocation();
   const selections = location.state?.selections;
 
-  const [selectionBox, setSelectionBox] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const startPoint = useRef(null);
+  // Chat state
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      content:
+        "Hello! I'm your character creation assistant. Would you like me to generate a story or self-introduction based on your new character? If so, what's your name?",
+    },
+  ]);
+  const [userMessage, setUserMessage] = useState("");
 
-  const handleMouseDown = (e) => {
-    const rect = previewRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    startPoint.current = { x, y };
-    setSelectionBox({ x, y, width: 0, height: 0 });
-    setIsDragging(true);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const rect = previewRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const startX = startPoint.current.x;
-    const startY = startPoint.current.y;
-    setSelectionBox({
-      x: Math.min(x, startX),
-      y: Math.min(y, startY),
-      width: Math.abs(x - startX),
-      height: Math.abs(y - startY),
+ 
+  // ---------------------------
+  // Save Image Function
+  // ---------------------------
+  const handleSaveImage = () => {
+    if (!previewRef.current) return;
+    html2canvas(previewRef.current, {
+      backgroundColor: null,
+      useCORS: true,
+      scale: 2,
+    }).then((canvas) => {
+      const link = document.createElement("a");
+      link.download = "oc.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
     });
   };
 
-  const handleMouseUp = () => setIsDragging(false);
+  // ---------------------------
+  // Chat Send Handler (Image Capture)
+  // ---------------------------
+  const handleSend = async () => {
+    const trimmedMsg = userMessage.trim();
+    if (!trimmedMsg) return;
 
-//   const handleRefine = async () => {
-//     if (!selectionBox || !previewRef.current) return;
+    // Add the user's message to the chat history
+    const updatedMessages = [...messages, { role: "user", content: trimmedMsg }];
+    setMessages(updatedMessages);
+    setUserMessage("");
 
-//     const scale = 2;
-//     const padding = 20;
-
-//     // Generate full character canvas
-//     const canvas = await html2canvas(previewRef.current, {
-//       backgroundColor: "#D9A2F4",
-//       scale: scale,
-//       useCORS: true,
-//     });
-
-//     const x = Math.max(0, (selectionBox.x - padding) * scale);
-//     const y = Math.max(0, (selectionBox.y - padding) * scale);
-//     const w = (selectionBox.width + padding * 2) * scale;
-//     const h = (selectionBox.height + padding * 2) * scale;
-
-//     // Cropped image
-//     const cropCanvas = document.createElement("canvas");
-//     cropCanvas.width = w;
-//     cropCanvas.height = h;
-//     cropCanvas.getContext("2d").drawImage(canvas, x, y, w, h, 0, 0, w, h);
-//     const imageBlob = await new Promise((res) => cropCanvas.toBlob(res, "image/png"));
-
-//     // Matching white mask on black
-//     const maskCanvas = document.createElement("canvas");
-//     maskCanvas.width = w;
-//     maskCanvas.height = h;
-//     const maskCtx = maskCanvas.getContext("2d");
-//     maskCtx.fillStyle = "black";
-//     maskCtx.fillRect(0, 0, w, h);
-
-//     // Draw white area
-//     maskCtx.fillStyle = "white";
-//     maskCtx.fillRect(padding * scale, padding * scale, selectionBox.width * scale, selectionBox.height * scale);
-//     const maskBlob = await new Promise((res) => maskCanvas.toBlob(res, "image/png"));
-
-//     const formData = new FormData();
-//     formData.append("file", imageBlob, "input.png");
-//     formData.append("mask", maskBlob, "mask.png");
-//     formData.append("instruction", instruction);
-
-//     try {
-//       const response = await fetch("http://localhost:8000/refine", {
-//         method: "POST",
-//         body: formData,
-//       });
-
-//       const data = await response.json();
-//       if (data.url) {
-//         window.open(data.url, "_blank");
-//       }
-//     } catch (err) {
-//       console.error("Refinement failed", err);
-//     }
-//   };
-
-const handleRefine = async () => {
-    if (!selectionBox || !previewRef.current) return;
-  
+    // Capture the current character preview
     const canvas = await html2canvas(previewRef.current, {
-      backgroundColor: "#D9A2F4",
+      backgroundColor: null,
+      useCORS: true,
       scale: 2,
     });
-  
     const blob = await new Promise((res) => canvas.toBlob(res, "image/png"));
-  
+
+    // Prepare the FormData to send the image and user instruction
     const formData = new FormData();
     formData.append("file", blob);
-    formData.append("instruction", instruction);
-    formData.append("box", JSON.stringify(selectionBox)); // Send box info
-  
+    formData.append("instruction", trimmedMsg);
+
     try {
-      const response = await fetch("http://localhost:8000/refine", {
+      const resp = await fetch("http://localhost:8000/refine-image-chat", {
         method: "POST",
         body: formData,
       });
-  
-      const result = await response.json();
-      if (result.url) window.open(result.url, "_blank");
-    } catch (error) {
-      console.error("AI refinement failed", error);
+      const data = await resp.json();
+      const aiReply = data.text || "Sorry, no response.";
+      setMessages((prev) => [...prev, { role: "assistant", content: aiReply }]);
+    } catch (err) {
+      console.error("Error in image chat refinement", err);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Oops, something went wrong while contacting the AI." },
+      ]);
     }
   };
-  
-  return (
-    <div className="flex flex-col items-center gap-8 p-8">
-      <h1 className="text-5xl font-bold">Refine With AI ✨</h1>
-      <div className="flex gap-36 bg-[#f4f3fd] p-10 rounded-3xl shadow-lg w-[1000px]">
-        <div
-          ref={previewRef}
-          className="relative w-[320px] h-[600px] flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-        >
-          {selections && <CharacterPreview selections={selections} />}
-          {isDragging && <div className="absolute inset-0 z-40 bg-transparent cursor-crosshair" />}
-          {selectionBox && (
-            <div
-              className="absolute border-2 border-blue-500 bg-blue-200/20 z-50"
-              style={{
-                left: selectionBox.x,
-                top: selectionBox.y,
-                width: selectionBox.width,
-                height: selectionBox.height,
-              }}
-            ></div>
-          )}
-        </div>
 
-        <div className="flex flex-col gap-10 items-center w-[400px]">
-          <div className="w-[500px] h-[320px] border-4 border-black rounded-xl p-4 bg-white shadow-inner">
-            <textarea
-              value={instruction}
-              onChange={(e) => setInstruction(e.target.value)}
-              placeholder="Describe what you'd like to change (e.g. 'Add a rose to the hand')"
-              className="w-full h-full bg-transparent resize-none outline-none text-lg"
-            />
+  // ---------------------------
+  // Render a single chat message bubble
+  // ---------------------------
+  const renderMessageBubble = (msg, idx) => {
+    const isAssistant = msg.role === "assistant";
+    return (
+      <div
+        key={idx}
+        className={`flex w-full mb-3 ${isAssistant ? "justify-start" : "justify-end"}`}
+      >
+        <div
+          className={`max-w-[70%] p-3 rounded-xl shadow ${
+            isAssistant
+              ? "bg-purple-100 text-purple-900"
+              : "bg-pink-100 text-pink-900"
+          }`}
+        >
+          <div className="text-sm font-semibold mb-1">
+            {isAssistant ? "LeadBot" : "You"}
           </div>
-          <div className="flex justify-center gap-4 mt-2 w-[500px] h-[100px]">
-            <ButtonPanelforAI
-              features={features}
-              setFeatures={setFeatures}
-              instruction={instruction}
-              onClick={handleRefine}
-            />
+          <div className="text-base whitespace-pre-wrap">{msg.content}</div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-8 py-8 min-h-screen bg-[#f3ecff]">
+      {/* Top Header with Back Button */}
+      <div className="w-full max-w-[1200px] flex items-center justify-between px-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="group relative border-4 border-[#dac3e7e0] text-[#c996ef] px-4 py-2 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
+        >
+          ← Back
+        </button>
+        <h1 className="text-5xl font-bold">Refine With AI ✨</h1>
+        <div className="w-24" /> {/* Spacer to balance the layout */}
+      </div>
+
+      {/* Main Container */}
+      <div className="w-full max-w-[1200px] bg-[#f4f3fd] p-8 rounded-3xl shadow-lg flex flex-col gap-8">
+        {/* Top Row: Character Preview and Chat */}
+        <div className="flex flex-col lg:flex-row gap-16 justify-center items-start">
+          {/* Character Preview with Selection Box */}
+          <div
+            ref={previewRef}
+            className="relative w-[320px] h-[600px] flex-shrink-0 flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white"
+            
+          >
+            {selections && <CharacterPreview selections={selections} />}
+            {(
+              <div className="absolute inset-0 z-40 bg-transparent cursor-crosshair" />
+            )}
+            
+          </div>
+
+          {/* Chat Container */}
+          <div className="flex flex-col items-center w-full max-w-[600px] gap-4">
+            <div className="w-full border-4 border-[#D2BCFA] rounded-2xl bg-white shadow-inner flex flex-col justify-between h-[500px]">
+              {/* Messages */}
+              <div className="p-4 overflow-y-auto flex-1">
+                {messages.map((msg, idx) => renderMessageBubble(msg, idx))}
+              </div>
+
+              {/* Input Row inside Chatbox */}
+              <div className="flex p-3 border-t border-gray-300 gap-2">
+                <input
+                  type="text"
+                  className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:outline-none text-base"
+                  value={userMessage}
+                  onChange={(e) => setUserMessage(e.target.value)}
+                  placeholder="Type your message..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSend();
+                  }}
+                />
+                <button
+                  onClick={handleSend}
+                  className="bg-white border-2 border-pink-300 text-pink-700 rounded-full px-5 py-2 hover:bg-pink-100 shadow transition-all font-semibold"
+                >
+                  ✉️ Send
+                </button>
+              </div> 
+            </div>
+
+            {/* Bottom Row: Save Button */}
+            <div className="flex justify-center">
+            <button
+                onClick={handleSaveImage}
+                className="group relative border-4 border-[#F5E960] text-[#B59E00] px-8 py-4 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
+            >
+                💾 Save
+                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#F5E960] text-black text-sm px-3 py-1 rounded-lg shadow">
+                Save as PNG!
+                </span>
+            </button>
+            </div>
           </div>
         </div>
       </div>
