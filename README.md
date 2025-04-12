@@ -1,20 +1,23 @@
 # 🧸 Build Your Original Character
 ## AI-Powered Character Customization Web App
 
-**Build Your OC** is a fun and interactive web app that lets users design original characters (OCs) by customizing layered SVG features and refining specific parts of their character using AI-powered image editing. Simply drag a box over a region and describe how you want to change it — our app takes care of the rest ✨.
+**Build Your OC** is a fun and interactive web app that lets users design original characters (OCs) by customizing layered SVG features and generating self-intro with AI based on the generated character - our app takes care of the rest ✨.
 
 
 
 ## 🧪 Using the App
 Customize your character on the left panel.
 
-Draw a rectangle over the area you want to refine.
+Then use our AI storyteller to generate your customized self-intro based on your created character!
 
-Enter an instruction (e.g., "Add a rose to this hand").
+Enter more details for AI to generate self-intro!
 
 Click ✨ Refine.
 
-<img width="710" alt="Screenshot 2025-04-07 at 3 07 23 PM" src="https://github.com/user-attachments/assets/2469b965-f287-477e-80bb-8104ff3504ce" />
+<img width="710" alt="Screenshot 2025-04-07 at 3 07 23 PM" src="https://github.com/user-attachments/assets/0698de7b-9e6a-4755-82c5-69394e1eb63d" />
+
+
+<img width="710" alt="Screenshot 2025-04-07 at 3 07 23 PM" src="https://github.com/user-attachments/assets/ddea20d2-6b6b-462d-9c8a-c5a413172dde" />
 
 
 ## 🛠 Tech Stack
