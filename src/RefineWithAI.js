@@ -14,7 +14,7 @@ const RefineWithAI = () => {
     {
       role: "assistant",
       content:
-        "Hello! I'm your character creation assistant. Would you like me to generate a story or self-introduction based on your new character? If so, what's your name?",
+        "Hello! I'm your character creation assistant. Would you like me to generate a story or self-introduction based on your new character? If so, what's your character's name?",
     },
   ]);
   const [userMessage, setUserMessage] = useState("");
