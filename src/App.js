@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
 import OCBuilder from './OCBuilder';
 import RefineWithAI from './RefineWithAI';
+import RefineWithAI2 from './RefineWithAI2';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/builder" element={<OCBuilder />} />
               <Route path="/refine" element={<RefineWithAI />} />
+              <Route path="/refine-ai2" element={<RefineWithAI2 />} />
             </Routes>
           </Router>
         </div>

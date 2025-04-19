@@ -1,11 +1,16 @@
 import os
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
+import openai
 from openai import OpenAI
 from dotenv import load_dotenv
 from PIL import Image, ImageDraw
 import io
 import json
+from pydantic import BaseModel
+from typing import Literal
+from io import BytesIO
+import base64
 
 load_dotenv()
 app = FastAPI()
@@ -64,4 +69,36 @@ async def refine_image_chat(file: UploadFile, instruction: str = Form(...)):
     except Exception as e:
         story = f"Error occurred: {e}"
 
+    return {"text": story}
+
+
+@app.post("/refine-ai2")
+async def refine_with_ai2(
+    file: UploadFile,
+    name: str = Form(...),
+    type: Literal["fantasy_story", "backstory", "self_intro", "superpowers"] = Form(...)
+):
+    content = await file.read()
+    image = Image.open(BytesIO(content)).convert("RGBA")  # optional, can be used later
+
+    prompt_map = {
+        "fantasy_story": f"Write a fantasy story about a character named {name} who lives in a magical world.",
+        "backstory": f"Create a detailed character backstory for someone named {name}.",
+        "self_intro": f"Write a self-introduction from the perspective of a character named {name}.",
+        "superpowers": f"Describe the superpowers and abilities of a character named {name}."
+    }
+
+    prompt = prompt_map[type]
+
+    # Call OpenAI GPT API
+    response = client.chat.completions.create(
+        model="gpt-4",  # or "gpt-3.5-turbo" if preferred
+        messages=[
+            {"role": "system", "content": "You are a creative storytelling assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=500
+    )
+
+    story = response.choices[0].message.content.strip()
     return {"text": story}
