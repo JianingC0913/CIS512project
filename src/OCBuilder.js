@@ -197,6 +197,16 @@ const OCBuilder = () => {
                 </span>
               </button>
 
+              {/* <button
+                onClick={handleRefine}
+                className="group relative border-4 border-[#F49097] px-8 py-4 rounded-full bg-white hover:bg-[#FDE7EA] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
+              >
+                ✨ Refine With AI
+                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#F49097] text-white text-sm px-3 py-1 rounded-lg shadow">
+                  Let AI transform the style based on famous animes!
+                </span>
+              </button> */}
+
               <button
                 onClick={handleRefine}
                 className="group relative border-4 border-[#F49097] px-8 py-4 rounded-full bg-white hover:bg-[#FDE7EA] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
@@ -207,7 +217,7 @@ const OCBuilder = () => {
                 </span>
               </button>
 
-              <button
+               <button
                 onClick={handleRefine2}
                 className="group relative border-4 border-[#F49097] px-8 py-4 rounded-full bg-white hover:bg-[#FDE7EA] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
               >
