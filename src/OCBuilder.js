@@ -128,7 +128,7 @@ const OCBuilder = () => {
     <div className="flex flex-col items-center">
       {/* Title */}
       <h1
-        className="text-6xl font-bold mb-4 p-2"
+        className="text-6xl font-bold mb-1 p-2"
         style={{ fontFamily: 'Aclonica, sans-serif' }}
       >
         Build Your Character!
