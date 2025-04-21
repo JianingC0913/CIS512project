@@ -5,3 +5,5 @@ python-multipart
 pillow
 openai
 dotenv
+replicate
+python-dotenv
