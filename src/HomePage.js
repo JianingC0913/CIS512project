@@ -98,7 +98,7 @@ export default function HomePage() {
         className="animate-pulse"
         style={{
           fontFamily: "Aclonica, sans-serif",
-          animationDuration: "1400ms",      // instead of 2s
+          animationDuration: "1000ms",      // instead of 2s
           animationTimingFunction: "ease-in-out"
           }}>
             {stage === -1 ? "Click anywhere to begin" : typedText}
