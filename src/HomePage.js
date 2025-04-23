@@ -1,32 +1,120 @@
-import React from "react";
+// import React from "react";
+// import { Link } from "react-router-dom";
+// import logo from "./assets/icons/logo.svg";
+
+// export default function HomePage() {
+//   return (
+//     <div className="w-full h-full flex flex-col items-center justify-center text-center px-6 relative font-sans">
+//       <img
+//         src={logo}
+//         alt="Logo"
+//         className="w-56 absolute top-[8%] drop-shadow-lg animate-pulse"
+//       />
+
+//       <div className="mt-56 flex flex-col items-center">
+//         <h1 className="text-7xl font-extrabold mb-10 bg-gradient-to-r from-[#F49097] via-[#F5E960] to-[#55D6C2] bg-clip-text text-transparent" style={{ fontFamily: "Aclonica, sans-serif" }}>
+//           Build Your Character
+//         </h1>
+
+//         <ul className="text-xl text-[#444] mb-14 leading-relaxed text-left list-disc list-inside max-w-xl space-y-4">
+//           <li>Our app help you create your character by selecting different components</li>
+//           <li>After building the character, you can generate a unique story for your character</li>
+//           <li>Let's start bring your character alive!</li>
+//         </ul>
+
+//         <Link to="/builder">
+//           <button className="bg-[#F5E960] text-black font-semibold py-3 px-10 rounded-full shadow-xl hover:shadow-yellow-400 hover:scale-110 transition-all duration-300 text-lg">
+//             Start Creating!
+//           </button>
+//         </Link>
+//       </div>
+//     </div>
+//   );
+// }
+
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "./assets/icons/logo.svg";
 
+const instructions = [
+  "  this app helps you create your character by selecting different components ",
+  " after building the character, you can generate a unique story for your character ",
+  " let's start bringing your character alive!",
+];
+
 export default function HomePage() {
+  const [stage, setStage] = useState(-1);
+  const [typedText, setTypedText] = useState("");
+  const [showButton, setShowButton] = useState(false);
+
+  // Typing effect
+  useEffect(() => {
+    const currentText = instructions[stage];
+    if (stage >= 0 && stage < instructions.length && currentText) {
+      setTypedText("");
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index < currentText.length) {
+          setTypedText((prev) => prev + currentText.charAt(index));
+          index++;
+        } else {
+          clearInterval(interval);
+          if (stage === instructions.length - 1) {
+            setShowButton(true);
+          }
+        }
+      }, 30);
+      return () => clearInterval(interval);
+    }
+  }, [stage]);
+
+  const handleClick = () => {
+    if (stage < instructions.length) {
+      setStage((prev) => prev + 1);
+    }
+  };
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center text-center px-6 relative font-sans">
+    <div
+      onClick={handleClick}
+      className="w-full h-screen flex flex-col items-center justify-center text-center px-6 relative font-sans cursor-pointer select-none"
+    >
       <img
         src={logo}
         alt="Logo"
-        className="w-56 absolute top-[8%] drop-shadow-lg animate-pulse"
+        className="w-56 absolute top-[8%] drop-shadow-lg"
       />
 
       <div className="mt-56 flex flex-col items-center">
-        <h1 className="text-7xl font-extrabold mb-10 bg-gradient-to-r from-[#F49097] via-[#F5E960] to-[#55D6C2] bg-clip-text text-transparent" style={{ fontFamily: "Aclonica, sans-serif" }}>
+        <h1
+          className="text-7xl font-extrabold mb-10 text-[#cb92e6] text-center"
+          style={{ fontFamily: "Aclonica, sans-serif", marginTop: '-20px' }}
+        >
           Build Your Character
         </h1>
 
-        <ul className="text-xl text-[#444] mb-14 leading-relaxed text-left list-disc list-inside max-w-xl space-y-4">
-          <li>Customize your look by choosing different features</li>
-          <li>Use AI to generate a unique story & description</li>
-          <li>Click below to begin</li>
-        </ul>
+        <div className="text-xl text-[#444] mb-8 leading-relaxed max-w-xl min-h-[60px]">
+        <p
+        className="animate-pulse"
+        style={{
+          fontFamily: "Aclonica, sans-serif",
+          animationDuration: "1400ms",      // instead of 2s
+          animationTimingFunction: "ease-in-out"
+          }}>
+            {stage === -1 ? "Click anywhere to begin" : typedText}
+        </p>
+        </div>
 
-        <Link to="/builder">
-          <button className="bg-[#F5E960] text-black font-semibold py-3 px-10 rounded-full shadow-xl hover:shadow-yellow-400 hover:scale-110 transition-all duration-300 text-lg">
-            Start Creating!
-          </button>
-        </Link>
+        {showButton && (
+          <Link to="/builder">
+            <button
+              style={{ fontFamily: "Aclonica, sans-serif" }}
+              className="bg-[#F5E960] text-black font-semibold py-3 px-10 rounded-full shadow-xl hover:shadow-yellow-400 hover:scale-110 transition-all duration-300 text-lg"
+            >
+              Start Creating!
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );
