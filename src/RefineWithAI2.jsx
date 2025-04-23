@@ -48,11 +48,25 @@ const RefineWithAI2 = () => {
 
   const handleSaveImage = () => {
     if (!previewRef.current) return;
+
+    // Find the save button inside previewRef and hide it
+    const saveButton = previewRef.current.querySelector('.save-icon-button');
+
+    // Store the original display style
+    const originalDisplay = saveButton?.style.display;
+
+    // Hide the save button for the screenshot
+    if (saveButton) saveButton.style.display = 'none';
+
+    
     html2canvas(previewRef.current, {
       backgroundColor: null,
       useCORS: true,
       scale: 2,
     }).then((canvas) => {
+      // Restore the original display after capture
+      if (saveButton) saveButton.style.display = originalDisplay || 'block';
+
       const link = document.createElement("a");
       link.download = "oc.png";
       link.href = canvas.toDataURL("image/png");
@@ -82,16 +96,25 @@ const RefineWithAI2 = () => {
       {/* Main */}
       <div className="w-full max-w-[1200px] bg-[#f3ecff] p-8 rounded-3xl shadow-lg flex flex-col gap-8">
         <div className="flex flex-col lg:flex-row gap-16 justify-center items-start">
+          
           {/* Character Preview */}
           <div
             ref={previewRef}
             className="relative w-[320px] h-[600px] flex-shrink-0 flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white"
           >
-            {selections && (
-              <div className="w-full h-full flex items-center justify-center overflow-hidden">
-                <CharacterPreview selections={selections} />
-              </div>
-            )}
+            <CharacterPreview selections={selections} />
+
+            {/* Save icon button */}
+            <button
+              onClick={handleSaveImage}
+              className="save-icon-button group absolute bottom-2 right-2 border-2 rounded-full p-2 hover:bg-[#FBF6D1] transition shadow-md text-2xl"
+              title="Save Image"
+            >
+              💾
+              <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#ebbd34] text-white text-sm px-3 py-1 rounded-lg shadow font-bold">
+                Save this image!
+              </span>
+            </button>
           </div>
 
           {/* Right Panel: Name + Buttons + Output */}
@@ -165,16 +188,8 @@ const RefineWithAI2 = () => {
               </div>
             )}
 
-            {/* Save Button */}
-            <button
-              onClick={handleSaveImage}
-              className="group relative border-4 border-[#F5E960] text-[#B59E00] px-8 py-4 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md mt-4"
-            >
-              💾 Save
-              <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#F5E960] text-black text-sm px-3 py-1 rounded-lg shadow">
-                Save as PNG!
-              </span>
-            </button>
+            {/*Button */}
+            
           </div>
         </div>
       </div>
