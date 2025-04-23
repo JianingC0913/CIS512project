@@ -39,6 +39,7 @@ import logo from "./assets/icons/logo.svg";
 const instructions = [
   "  this app helps you create your character by selecting different components ",
   " after building the character, you can generate a unique story for your character ",
+  " you can also tweak your stories based on differnt App vibes for quick sharing ",
   " let's start bringing your character alive!",
 ];
 
