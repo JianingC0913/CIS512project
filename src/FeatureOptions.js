@@ -2,7 +2,7 @@ import React from 'react';
 
 const stylePerFeature = {
   skin: {
-    container: 'w-[120px] h-[120px] flex justify-center items-center rounded-2xl overflow-hidden',
+    container: 'w-[160px] h-[160px] flex justify-center items-center rounded-2xl overflow-hidden',
     image: 'w-[80%] h-[80%] object-contain',
     style: {},
   },
@@ -37,13 +37,14 @@ const FeatureOptions = ({ options = [], selected, onSelect, featureType }) => {
   const { container, image, style } = stylePerFeature[featureType] || stylePerFeature.skin;
 
   return (
-    <div className="flex justify-center">
-      <div className="border-4 border-black rounded-[40px] px-12 py-10 bg-[#F5F1FA] flex gap-8 flex-wrap justify-center items-center min-w-[500px] min-h-[200px]">
+    <div className="w-full flex justify-center">
+      <div className="w-full md:w-5/6 h-[500px] border-4 border-black rounded-[40px] px-12 py-10 bg-[#F5F1FA] grid grid-cols-3 gap-8 min-h-[200px]">   
+        
         {options.map((opt, index) => (
           <button
             key={index}
             onClick={() => onSelect(index)}
-            className={`rounded-2xl transition-all cursor-pointer border-4 ${
+            className={`flex justify-center items-center rounded-2xl transition-all cursor-pointer border-4 ${
               selected === index
                 ? 'border-accentYellow bg-[#FFFBEF]'
                 : 'border-[#e2d9f3] bg-white hover:border-gray-300'
