@@ -1,9 +1,9 @@
 # run in the terminal to download following dependencies: pip install -r src/backend/requirements.txt 
 fastapi
 uvicorn
-torch
-torchvision
-opencv-python
 python-multipart
 pillow
-git+https://github.com/facebookresearch/segment-anything.git
+openai
+dotenv
+replicate
+python-dotenv

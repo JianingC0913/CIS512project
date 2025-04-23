@@ -14,7 +14,7 @@ const RefineWithAI = () => {
     {
       role: "assistant",
       content:
-        "Hello! I'm your character creation assistant. Would you like me to generate a story or self-introduction based on your new character? If so, what's your name?",
+        "Hello! I'm your character creation assistant. Would you like me to generate a story or self-introduction based on your new character? If so, what's your character's name?",
     },
   ]);
   const [userMessage, setUserMessage] = useState("");
@@ -106,7 +106,7 @@ const RefineWithAI = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 py-8 min-h-screen bg-[#f3ecff]">
+    <div className="flex flex-col items-center gap-2 py-4 min-h-screen bg-[#f3ecff]">
       {/* Top Header with Back Button */}
       <div className="w-full max-w-[1200px] flex items-center justify-between px-4">
         <button
@@ -115,12 +115,13 @@ const RefineWithAI = () => {
         >
           ← Back
         </button>
-        <h1 className="text-5xl font-bold">Refine With AI ✨</h1>
-        <div className="w-24" /> {/* Spacer to balance the layout */}
+        <h1 className="text-6xl font-bold mb-1 p-2"
+        style={{ fontFamily: 'Aclonica, sans-serif' }}>Refine With AI ✨</h1>
+        <div className="w-24" />
       </div>
 
       {/* Main Container */}
-      <div className="w-full max-w-[1200px] bg-[#f4f3fd] p-8 rounded-3xl shadow-lg flex flex-col gap-8">
+      <div className="w-full max-w-[1200px] bg-[#f3ecff] p-8 rounded-3xl shadow-lg flex flex-col gap-8">
         {/* Top Row: Character Preview and Chat */}
         <div className="flex flex-col lg:flex-row gap-16 justify-center items-start">
           {/* Character Preview with Selection Box */}
