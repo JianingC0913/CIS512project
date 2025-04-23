@@ -37,22 +37,24 @@ import { Link } from "react-router-dom";
 import logo from "./assets/icons/logo.svg";
 
 const instructions = [
-  "  this app helps you create your character by selecting different components ",
-  " after building the character, you can generate a unique story for your character ",
-  " you can also tweak your stories based on differnt App vibes for quick sharing ",
-  " let's start bringing your character alive!",
+  "  This app helps you create your character by selecting different components ",
+  " After building the character, you can generate a unique story for your character ",
+  " You can also tweak your stories based on differnt App vibes for quick sharing ",
+  " Let's start bringing your character alive!",
 ];
 
 export default function HomePage() {
   const [stage, setStage] = useState(-1);
   const [typedText, setTypedText] = useState("");
   const [showButton, setShowButton] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   // Typing effect
   useEffect(() => {
     const currentText = instructions[stage];
     if (stage >= 0 && stage < instructions.length && currentText) {
       setTypedText("");
+      setIsTyping(true); // start typing lock
       let index = 0;
       const interval = setInterval(() => {
         if (index < currentText.length) {
@@ -60,6 +62,7 @@ export default function HomePage() {
           index++;
         } else {
           clearInterval(interval);
+          setIsTyping(false); // done typing, unlock
           if (stage === instructions.length - 1) {
             setShowButton(true);
           }
@@ -70,7 +73,7 @@ export default function HomePage() {
   }, [stage]);
 
   const handleClick = () => {
-    if (stage < instructions.length) {
+    if (!isTyping && stage < instructions.length) {
       setStage((prev) => prev + 1);
     }
   };

@@ -107,7 +107,7 @@ const OCBuilder = () => {
     }).then(canvas => {
        // Restore the original display after capture
       if (saveButton) saveButton.style.display = originalDisplay || 'block';
-      
+
       const link = document.createElement('a');
       link.download = 'oc.png';
       link.href = canvas.toDataURL('image/png');
@@ -139,19 +139,18 @@ const OCBuilder = () => {
   return (
     <div className="flex flex-col items-center">
       {/* Title */}
-      <h1
+      {/* <h1
         className="text-6xl font-bold mb-1 p-2"
         style={{ fontFamily: 'Aclonica, sans-serif' }}
       >
         Build Your Character!
-      </h1>
+      </h1> */}
 
-      <div className="flex gap-10 bg-[#f4f3fd] p-10 rounded-3xl shadow-lg">
+       <div className="w-full max-w-[90vw] min-h-[80vh] bg-[#f4f3fd] p-6 md:p-10 rounded-3xl shadow-lg flex flex-col md:flex-row gap-6 md:gap-1">
+        
         {/* Preview */}
-        <div
-          className="w-[320px] h-[600px] flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white relative"
-          ref={previewRef}
-        >
+        <div className="w-full md:w-1/3 flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white relative" ref={previewRef}>
+
           <CharacterPreview selections={selections} />
           {/* Save icon button */}
           <button
@@ -168,7 +167,7 @@ const OCBuilder = () => {
         </div>
 
         {/* Feature Panel */}
-        <div className="flex flex-col gap-4 items-center">
+        <div className="flex flex-col gap-4 items-center flex-1">
           {/* Tabs */}
           <div className="flex gap-2">
             {TABS.map(tab => (
@@ -195,9 +194,9 @@ const OCBuilder = () => {
           />
 
           {/* Button Rows */}
-          <div className="flex flex-col items-center gap-4 mt-2">
+          <div className="flex flex-row items-center gap-4 mt-2">
             {/* Row 1 - Random Generate */}
-            <div className="flex justify-center">
+            <div className="flex gap-4 justify-center">
               <button
                 onClick={handleRandomize}
                 className="group relative border-4 border-[#DFB2F4] px-8 py-4 rounded-full bg-white hover:bg-[#f4ebfb] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
@@ -210,29 +209,19 @@ const OCBuilder = () => {
             </div>
 
             {/* Row 2 - Save + Refine */}
-            <div className="flex gap-4 justify-center">
-
-              {/* <button
-                onClick={handleRefine}
-                className="group relative border-4 border-[#F49097] px-8 py-4 rounded-full bg-white hover:bg-[#FDE7EA] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
-              >
-                ✨ Refine With AI
-                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#F49097] text-white text-sm px-3 py-1 rounded-lg shadow">
-                  Let AI transform the style based on famous animes!
-                </span>
-              </button> */}
+            <div className="gap-4 justify-center">
 
               <button
                 onClick={handleRefine}
                 className="group relative border-4 border-[#F49097] px-8 py-4 rounded-full bg-white hover:bg-[#FDE7EA] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
               >
-                💬 Chat Mode
+                💬 AI Story
                 <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#F49097] text-white text-sm px-3 py-1 rounded-lg shadow">
-                  Let AI create a story thru chatbox!
+                  Let AI create a story or self-intro for your character!
                 </span>
               </button>
 
-               <button
+               {/* <button
                 onClick={handleRefine2}
                 className="group relative border-4 border-[#F49097] px-8 py-4 rounded-full bg-white hover:bg-[#FDE7EA] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
               >
@@ -240,7 +229,9 @@ const OCBuilder = () => {
                 <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#F49097] text-white text-sm px-3 py-1 rounded-lg shadow">
                   Let AI create a story thru buttons!
                 </span>
-              </button>
+              </button> */}
+
+
             </div>
           </div>
         </div>
