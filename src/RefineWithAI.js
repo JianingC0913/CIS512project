@@ -122,15 +122,7 @@ const RefineWithAI = () => {
     <div className="flex flex-col items-center gap-2 py-4 min-h-screen bg-[#f3ecff]">
       {/* Top Header with Back Button */}
       <div className="w-full max-w-[1200px] flex items-center justify-between px-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="group relative border-4 border-[#dac3e7e0] text-[#c996ef] px-4 py-2 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
-        >
-          ← Back
-        </button>
-        <h1 className="text-6xl font-bold mb-1 p-2"
-        style={{ fontFamily: 'Aclonica, sans-serif' }}>Refine With AI ✨</h1>
-        <div className="w-24" />
+       
       </div>
 
       {/* Main Container */}
@@ -191,7 +183,12 @@ const RefineWithAI = () => {
 
             {/* Bottom Row:*/}
             <div className="flex justify-center">
-            
+            <button
+          onClick={() => navigate(-1)}
+          className="group relative border-4 border-[#dac3e7e0] text-[#c996ef] px-4 py-2 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
+        >
+          ← Back
+        </button>
             </div>
           </div>
         </div>

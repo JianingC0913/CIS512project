@@ -1,45 +1,11 @@
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import logo from "./assets/icons/logo.svg";
-
-// export default function HomePage() {
-//   return (
-//     <div className="w-full h-full flex flex-col items-center justify-center text-center px-6 relative font-sans">
-//       <img
-//         src={logo}
-//         alt="Logo"
-//         className="w-56 absolute top-[8%] drop-shadow-lg animate-pulse"
-//       />
-
-//       <div className="mt-56 flex flex-col items-center">
-//         <h1 className="text-7xl font-extrabold mb-10 bg-gradient-to-r from-[#F49097] via-[#F5E960] to-[#55D6C2] bg-clip-text text-transparent" style={{ fontFamily: "Aclonica, sans-serif" }}>
-//           Build Your Character
-//         </h1>
-
-//         <ul className="text-xl text-[#444] mb-14 leading-relaxed text-left list-disc list-inside max-w-xl space-y-4">
-//           <li>Our app help you create your character by selecting different components</li>
-//           <li>After building the character, you can generate a unique story for your character</li>
-//           <li>Let's start bring your character alive!</li>
-//         </ul>
-
-//         <Link to="/builder">
-//           <button className="bg-[#F5E960] text-black font-semibold py-3 px-10 rounded-full shadow-xl hover:shadow-yellow-400 hover:scale-110 transition-all duration-300 text-lg">
-//             Start Creating!
-//           </button>
-//         </Link>
-//       </div>
-//     </div>
-//   );
-// }
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "./assets/icons/logo.svg";
 
 const instructions = [
-  "  This app helps you create your character by selecting different components ",
-  " After building the character, you can generate a unique story for your character ",
-  " You can also tweak your stories based on differnt App vibes for quick sharing ",
+  " This app helps you create your character by selecting different outfits.",
+  " After building the character, you can generate a unique story for your character.",
+  " You can also tweak your stories based on differnt App vibes for quick sharing.",
   " Let's start bringing your character alive!",
 ];
 
