@@ -128,23 +128,12 @@ const OCBuilder = () => {
   };
 
   const handleRefine = () => {
-    navigate('/refine', { state: { selections } });
-  };
-
-  const handleRefine2 = () => {
-    navigate('/refine-ai2', { state: { selections } });
+    navigate('/ai-choice', { state: { selections } });
   };
 
 
   return (
     <div className="flex flex-col items-center">
-      {/* Title */}
-      {/* <h1
-        className="text-6xl font-bold mb-1 p-2"
-        style={{ fontFamily: 'Aclonica, sans-serif' }}
-      >
-        Build Your Character!
-      </h1> */}
 
        <div className="w-full max-w-[90vw] min-h-[80vh] bg-[#f4f3fd] p-6 md:p-10 rounded-3xl shadow-lg flex flex-col md:flex-row gap-6 md:gap-1">
         

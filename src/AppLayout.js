@@ -5,6 +5,7 @@ import HomePage from './HomePage';
 import OCBuilder from './OCBuilder';
 import RefineWithAI from './RefineWithAI';
 import RefineWithAI2 from './RefineWithAI2';
+import AIChoicePage from './AIChoicePage';
 
 const AppLayout = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ const AppLayout = () => {
           <h1 className="text-7xl font-extrabold text-[#cb92e6] bg-clip-text text-transparent" style={{ fontFamily: 'Aclonica, sans-serif' }}>
             Build Your Character!
           </h1>
-          <img src="/logo.ico" alt="Logo" className="w-12 h-12 mr-10 hover:scale-105 transition" />
+          <img src="/logo.ico" alt="Logo" className="w-14 h-14 mr-10 hover:scale-105 transition" />
         </div>
       )}
 
@@ -35,7 +36,7 @@ const AppLayout = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white border-4 border-[#F49097] rounded-[32px] shadow-2xl p-10 w-[90%] max-w-xl text-center transition-all duration-300 scale-100">
             <h2 className="text-3xl font-bold mb-6 text-[#F49097]" style={{ fontFamily: 'Aclonica, sans-serif' }}>
-                Go back to homepage?
+                Go back to home page?
             </h2>
             <p className="mb-8 text-gray-700 text-xl font-bold">This will remove all your changes.</p>
             <div className="flex justify-center gap-6">
@@ -62,6 +63,7 @@ const AppLayout = () => {
         <Route path="/builder" element={<OCBuilder />} />
         <Route path="/refine" element={<RefineWithAI />} />
         <Route path="/refine-ai2" element={<RefineWithAI2 />} />
+        <Route path="/ai-choice" element={<AIChoicePage />} />
       </Routes>
     </>
   );
