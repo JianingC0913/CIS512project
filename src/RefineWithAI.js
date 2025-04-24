@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import html2canvas from "html2canvas";
-import CharacterPreview from "./CharacterPreview";
+import React, { useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import html2canvas from 'html2canvas';
+import CharacterPreview from './CharacterPreview';
 
 const RefineWithAI = () => {
   const navigate = useNavigate();
@@ -9,136 +9,75 @@ const RefineWithAI = () => {
   const location = useLocation();
   const selections = location.state?.selections;
 
-  // Chat state
   const [messages, setMessages] = useState([
     {
-      role: "assistant",
-      content:
-        "Hello! I'm your character creation assistant. Would you like me to generate a story or self-introduction based on your new character? If so, what's your character's name?",
+      role: 'assistant',
+      content: "Hello! I'm your character creation assistant. Would you like me to generate a story or self-introduction based on your new character? If so, what's your character's name?",
     },
   ]);
-  const [userMessage, setUserMessage] = useState("");
+  const [userMessage, setUserMessage] = useState('');
 
- 
-  // ---------------------------
-  // Save Image Function
-  // ---------------------------
   const handleSaveImage = () => {
     if (!previewRef.current) return;
-
-    // Find the save button inside previewRef and hide it
     const saveButton = previewRef.current.querySelector('.save-icon-button');
-
-    // Store the original display style
     const originalDisplay = saveButton?.style.display;
-
-    // Hide the save button for the screenshot
     if (saveButton) saveButton.style.display = 'none';
 
-    html2canvas(previewRef.current, {
-      backgroundColor: null,
-      useCORS: true,
-      scale: 2,
-    }).then((canvas) => {
-      // Restore the original display after capture
+    html2canvas(previewRef.current, { backgroundColor: null, useCORS: true, scale: 2 }).then((canvas) => {
       if (saveButton) saveButton.style.display = originalDisplay || 'block';
-
-      const link = document.createElement("a");
-      link.download = "oc.png";
-      link.href = canvas.toDataURL("image/png");
+      const link = document.createElement('a');
+      link.download = 'oc.png';
+      link.href = canvas.toDataURL('image/png');
       link.click();
     });
   };
 
-  // ---------------------------
-  // Chat Send Handler (Image Capture)
-  // ---------------------------
   const handleSend = async () => {
-    const trimmedMsg = userMessage.trim();
-    if (!trimmedMsg) return;
+    const trimmed = userMessage.trim();
+    if (!trimmed) return;
 
-    // Add the user's message to the chat history
-    const updatedMessages = [...messages, { role: "user", content: trimmedMsg }];
+    const updatedMessages = [...messages, { role: 'user', content: trimmed }];
     setMessages(updatedMessages);
-    setUserMessage("");
+    setUserMessage('');
 
-    // Capture the current character preview
-    const canvas = await html2canvas(previewRef.current, {
-      backgroundColor: null,
-      useCORS: true,
-      scale: 2,
-    });
-    const blob = await new Promise((res) => canvas.toBlob(res, "image/png"));
+    const canvas = await html2canvas(previewRef.current, { backgroundColor: null, useCORS: true, scale: 2 });
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
 
-    // Prepare the FormData to send the image and user instruction
     const formData = new FormData();
-    formData.append("file", blob);
-    formData.append("instruction", trimmedMsg);
+    formData.append('file', blob);
+    formData.append('instruction', trimmed);
 
     try {
-      const resp = await fetch("http://localhost:8000/refine-image-chat", {
-        method: "POST",
-        body: formData,
-      });
+      const resp = await fetch('http://localhost:8000/refine-image-chat', { method: 'POST', body: formData });
       const data = await resp.json();
-      const aiReply = data.text || "Sorry, no response.";
-      setMessages((prev) => [...prev, { role: "assistant", content: aiReply }]);
-    } catch (err) {
-      console.error("Error in image chat refinement", err);
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Oops, something went wrong while contacting the AI." },
-      ]);
+      const aiReply = data.text || 'Sorry, no response.';
+      setMessages((prev) => [...prev, { role: 'assistant', content: aiReply }]);
+    } catch {
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'Oops! Something went wrong.' }]);
     }
   };
 
-  // ---------------------------
-  // Render a single chat message bubble
-  // ---------------------------
   const renderMessageBubble = (msg, idx) => {
-    const isAssistant = msg.role === "assistant";
+    const isBot = msg.role === 'assistant';
     return (
-      <div
-        key={idx}
-        className={`flex w-full mb-3 ${isAssistant ? "justify-start" : "justify-end"}`}
-      >
-        <div
-          className={`max-w-[70%] p-3 rounded-xl shadow ${
-            isAssistant
-              ? "bg-purple-100 text-purple-900"
-              : "bg-pink-100 text-pink-900"
-          }`}
-        >
-          <div className="text-sm font-semibold mb-1">
-            {isAssistant ? "LeadBot" : "You"}
-          </div>
-          <div className="text-base whitespace-pre-wrap">{msg.content}</div>
+      <div key={idx} className={`flex w-full mb-3 ${isBot ? 'justify-start' : 'justify-end'}`}>
+        <div className={`max-w-[70%] p-3 rounded-xl shadow text-xl whitespace-pre-wrap ${isBot ? 'bg-purple-100 text-purple-900' : 'bg-pink-100 text-pink-900'}`}>
+          <div className="text-2xl font-semibold mb-1">{isBot ? 'LeadBot' : 'You'}</div>
+          {msg.content}
         </div>
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col items-center gap-2 py-4 min-h-screen bg-[#f3ecff]">
-      {/* Top Header with Back Button */}
-      <div className="w-full max-w-[1200px] flex items-center justify-between px-4">
-       
-      </div>
-
-      {/* Main Container */}
-      <div className="w-full max-w-[1200px] bg-[#f3ecff] p-8 rounded-3xl shadow-lg flex flex-col gap-8">
-        {/* Top Row: Character Preview and Chat */}
-        <div className="flex flex-col lg:flex-row gap-16 justify-center items-start">
-          {/* Character Preview with Selection Box */}
-          <div
-            ref={previewRef}
-            className="relative w-[320px] h-[600px] flex-shrink-0 flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white"
-            
-          >
-           <CharacterPreview selections={selections} />
-          
-
-            {/* Save icon button */}
+    <div className="flex flex-col items-center">
+      <div className="w-full max-w-[90vw] min-h-[80vh] bg-[#f4f3fd] p-6 md:p-10 rounded-3xl shadow-lg flex flex-col md:flex-row gap-6">
+        {/* Character Preview */}
+        <div
+          ref={previewRef}
+          className="w-full md:w-1/3 flex justify-center items-center border-4 border-black rounded-3xl p-4 bg-white relative"
+        >
+          <CharacterPreview selections={selections} />
           <button
             onClick={handleSaveImage}
             className="save-icon-button group absolute bottom-2 right-2 border-2 rounded-full p-2 hover:bg-[#FBF6D1] transition shadow-md text-2xl"
@@ -149,47 +88,43 @@ const RefineWithAI = () => {
               Save this image!
             </span>
           </button>
-            
         </div>
 
-          {/* Chat Container */}
-          <div className="flex flex-col items-center w-full max-w-[600px] gap-4">
-            <div className="w-full border-4 border-[#D2BCFA] rounded-2xl bg-white shadow-inner flex flex-col justify-between h-[500px]">
-              {/* Messages */}
-              <div className="p-4 overflow-y-auto flex-1">
-                {messages.map((msg, idx) => renderMessageBubble(msg, idx))}
-              </div>
+        {/* Chat Panel */}
+        <div className="flex flex-col items-center flex-1 gap-6">
+          <div className="w-full border-4 border-[#D2BCFA] rounded-3xl bg-white shadow-inner flex flex-col justify-between h-[500px]">
+            <div className="p-4 overflow-y-auto flex-1">{messages.map((m, i) => renderMessageBubble(m, i))}</div>
 
-              {/* Input Row inside Chatbox */}
-              <div className="flex p-3 border-t border-gray-300 gap-2">
-                <input
-                  type="text"
-                  className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:outline-none text-base"
-                  value={userMessage}
-                  onChange={(e) => setUserMessage(e.target.value)}
-                  placeholder="Type your message..."
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSend();
-                  }}
-                />
-                <button
-                  onClick={handleSend}
-                  className="bg-white border-2 border-pink-300 text-pink-700 rounded-full px-5 py-2 hover:bg-pink-100 shadow transition-all font-semibold"
-                >
-                  ✉️ Send
-                </button>
-              </div> 
+            {/* Input */}
+            <div className="flex p-3 border-t border-gray-300 gap-2">
+              <input
+                type="text"
+                value={userMessage}
+                onChange={(e) => setUserMessage(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="Type your message..."
+                className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:outline-none text-xl"
+              />
+              <button
+                onClick={handleSend}
+                className="text-2xl bg-white border-2 border-pink-300 text-pink-700 rounded-full px-5 py-2 hover:bg-pink-100 shadow transition-all font-semibold"
+              >
+                ✉️ Send
+              </button>
             </div>
+          </div>
 
-            {/* Bottom Row:*/}
-            <div className="flex justify-center">
+          {/* Back Button */}
+          <div className="flex justify-center">
             <button
-          onClick={() => navigate(-1)}
-          className="group relative border-4 border-[#dac3e7e0] text-[#c996ef] px-4 py-2 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
-        >
-          ← Back
-        </button>
-            </div>
+              onClick={() => navigate(-1)}
+              className="group relative border-4 border-[#dac3e7] text-[#c996ef] px-6 py-3 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
+            >
+              ← Back
+              {/* <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#FBF6D1] text-[#4B0082] text-sm px-3 py-1 rounded-lg shadow">
+                  Go back to the previous page
+              </span> */}
+            </button>
           </div>
         </div>
       </div>
