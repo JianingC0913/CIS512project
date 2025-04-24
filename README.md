@@ -1,19 +1,19 @@
-# 🧸 Build Your Original Character
-## AI-Powered Character Customization Web App
+# 🧸 Build Your Character
+## AI-Powered Character Customization & Storytelling
 
 
-**Build Your OC** is a fun and interactive web app that lets users design original characters (OCs) by customizing layered SVG features and generating self-intro with AI based on the generated character - our app takes care of the rest ✨.
+**Build Your Character** is a creative and interactive web app that empowers users to design original characters using a modular SVG builder—and then generate custom-written stories, bios, or self-introductions using AI based on the character’s traits. Whether you're creating a hero for a game, a persona for social media, or just for fun, our app helps bring your character to life through words.
 
 
 
-## 🧪 Using the App
-Customize your character on the left panel.
+## ✨ What You Can Do
 
-Then use our AI storyteller to generate your customized self-intro based on your created character!
+- 🎨 Customize Your Character:
+  - Use our layered SVG-based builder to create your OC’s appearance—including skin tone, hair, eyes, outfit, and more.
 
-Enter more details for AI to generate self-intro!
-
-Click ✨ Refine.
+- ✍️ Generate a Story with AI
+  - Once your character is ready, use our AI writer to create a fantasy story, write a backstory, or generate a self-introduction.
+  - Tailor your text to Platforms: choose where you want to share your OC (Instagram, YouTube, TikTok, LinkedIn, etc.), and we’ll adjust the tone and format accordingly!
 
 
 <img width="1186" alt="Screenshot 2025-04-24 at 12 12 24 AM" src="https://github.com/user-attachments/assets/e3cf7af1-fc3f-48d4-9aa5-856daaf67772" />
@@ -46,31 +46,33 @@ Click ✨ Refine.
 ```
 git clone https://github.com/JianingC0913/CIS512project.git
 cd CIS512project
+```
 
-🧩 Frontend Setup (/src)
-📦 Install Dependencies and Start the React App
+
+### 2. Frontend Setup (/src)
+Install Dependencies and Start the React App
+```
 npm install
 npm start
+```
 
 
-🧠 Backend Setup (/backend)
-📦 Install Dependencies
+### 3. Backend Setup (/backend)
+Get your OpenAPI key, place it in .env file like below. Make sure your .env file exists **at the root level of this project (it should be at the same level as /src, not inside /src)**:
+```
+OPENAI_API_KEY="sk-..."
+```
+
+Install Dependencies and start the Backend Server
+```
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-
-📦 Make sure your .env file exists in /backend and contains:
-OPENAI_API_KEY=sk-...
-
-
-▶️ Start the FastAPI Server
 uvicorn src.backend.main:app --reload
-``` 
+```
 
 
-
-
-## 🧑‍🎨 Credits
+## 👩🏻‍💻👩🏻‍💻👩🏻‍💻 Credits
 Built by Jianing Cai, Lesley Zhao, Kate Cai for CIS 512 Human-Computer Interaction
 University of Pennsylvania, 2025 Spring
 
