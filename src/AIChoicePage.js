@@ -4,7 +4,7 @@ import html2canvas from 'html2canvas';
 import CharacterPreview from './CharacterPreview';
 
 const guidanceText = [
-  "Click anywhere to show AI tutorial.",
+  "Click anywhere to show AI tutorial 📘",
   "▶ Chat Mode allows for interactive storytelling through conversation.",
   "▶ Suggestion Mode offers quick button-based prompts to guide your story.",
 //   "Start by choosing one of the two buttons below!"
