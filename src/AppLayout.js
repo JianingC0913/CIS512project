@@ -25,7 +25,7 @@ const AppLayout = () => {
           <button onClick={() => setShowConfirm(true)} className="ml-12">
             <img src="/home.png" alt="Home" className="w-12 h-12 hover:scale-105 transition" />
           </button>
-          <h1 className="text-7xl font-extrabold text-[#cb92e6] bg-clip-text text-transparent" style={{ fontFamily: 'Aclonica, sans-serif' }}>
+          <h1 className="text-7xl font-extrabold text-[#cb92e6] bg-clip-text " style={{ fontFamily: 'Aclonica, sans-serif' }}>
             Build Your Character!
           </h1>
           <img src="/logo.ico" alt="Logo" className="w-14 h-14 mr-10 hover:scale-105 transition" />
