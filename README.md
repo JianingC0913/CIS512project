@@ -49,7 +49,7 @@ cd CIS512project
 ```
 
 
-### 2. Frontend Setup (/src)
+### 2. Frontend Setup
 Install Dependencies and Start the React App
 ```
 npm install
@@ -57,7 +57,7 @@ npm start
 ```
 
 
-### 3. Backend Setup (/backend)
+### 3. Backend Setup 
 Get your OpenAPI key, place it in .env file like below. Make sure your .env file exists **at the root level of this project (it should be at the same level as /src, not inside /src)**:
 ```
 OPENAI_API_KEY="sk-..."
