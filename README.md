@@ -15,10 +15,11 @@ Enter more details for AI to generate self-intro!
 
 Click ✨ Refine.
 
-<img width="710" alt="Screenshot 2025-04-07 at 3 07 23 PM" src="https://github.com/user-attachments/assets/0698de7b-9e6a-4755-82c5-69394e1eb63d" />
 
-
-<img width="710" alt="Screenshot 2025-04-07 at 3 07 23 PM" src="https://github.com/user-attachments/assets/ddea20d2-6b6b-462d-9c8a-c5a413172dde" />
+<img width="1186" alt="Screenshot 2025-04-24 at 12 12 24 AM" src="https://github.com/user-attachments/assets/e3cf7af1-fc3f-48d4-9aa5-856daaf67772" />
+<img width="1182" alt="Screenshot 2025-04-24 at 12 12 53 AM" src="https://github.com/user-attachments/assets/89341504-6179-4961-862f-df35571bc0ae" />
+<img width="1172" alt="Screenshot 2025-04-24 at 12 13 12 AM" src="https://github.com/user-attachments/assets/2396a629-1959-4398-ba64-86ec47746a4a" />
+<img width="1190" alt="Screenshot 2025-04-24 at 12 13 27 AM" src="https://github.com/user-attachments/assets/5522b178-3ea5-4164-9648-c69681d06dbd" />
 
 
 ## 🛠 Tech Stack
