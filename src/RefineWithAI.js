@@ -2,12 +2,17 @@ import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import CharacterPreview from './CharacterPreview';
+import { jsPDF } from 'jspdf';
 
 const RefineWithAI = () => {
   const navigate = useNavigate();
   const previewRef = useRef();
   const location = useLocation();
   const selections = location.state?.selections;
+  const [copied, setCopied] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [pendingAIIndex, setPendingAIIndex] = useState(null);
 
   const [messages, setMessages] = useState([
     {
@@ -35,42 +40,124 @@ const RefineWithAI = () => {
   const handleSend = async () => {
     const trimmed = userMessage.trim();
     if (!trimmed) return;
-
-    const updatedMessages = [...messages, { role: 'user', content: trimmed }];
+  
+    const userEntry = { role: 'user', content: trimmed };
+    const aiPlaceholder = { role: 'assistant', content: '✨ Generating your story ......' };
+  
+    const updatedMessages = [...messages, userEntry, aiPlaceholder];
+    const aiIndex = updatedMessages.length - 1;
+  
     setMessages(updatedMessages);
     setUserMessage('');
-
+    setLoading(true);
+    setPendingAIIndex(aiIndex);
+  
     const canvas = await html2canvas(previewRef.current, { backgroundColor: null, useCORS: true, scale: 2 });
     const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
-
+  
     const formData = new FormData();
     formData.append('file', blob);
     formData.append('instruction', trimmed);
-
+  
     try {
       const resp = await fetch('http://localhost:8000/refine-image-chat', { method: 'POST', body: formData });
       const data = await resp.json();
       const aiReply = data.text || 'Sorry, no response.';
-      setMessages((prev) => [...prev, { role: 'assistant', content: aiReply }]);
+  
+      // Replace the placeholder with the real response
+      setMessages((prev) => {
+        const newMsgs = [...prev];
+        newMsgs[aiIndex] = { role: 'assistant', content: aiReply };
+        return newMsgs;
+      });
     } catch {
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'Oops! Something went wrong.' }]);
+      setMessages((prev) => {
+        const newMsgs = [...prev];
+        newMsgs[aiIndex] = { role: 'assistant', content: 'Oops! Something went wrong.' };
+        return newMsgs;
+      });
+    } finally {
+      setLoading(false);
+      setPendingAIIndex(null);
     }
   };
-
+  
   const renderMessageBubble = (msg, idx) => {
     const isBot = msg.role === 'assistant';
+    const isPending = idx === pendingAIIndex && loading;
+  
     return (
       <div key={idx} className={`flex w-full mb-3 ${isBot ? 'justify-start' : 'justify-end'}`}>
-        <div className={`max-w-[70%] p-3 rounded-xl shadow text-xl whitespace-pre-wrap ${isBot ? 'bg-purple-100 text-purple-900' : 'bg-pink-100 text-pink-900'}`}>
+        <div className={`max-w-[70%] p-3 rounded-xl shadow text-xl whitespace-pre-wrap ${
+          isBot ? 'bg-purple-100 text-purple-900' : 'bg-pink-100 text-pink-900'
+        } ${isPending ? 'animate-pulse' : ''}`}>
           <div className="text-2xl font-semibold mb-1">{isBot ? 'LeadBot' : 'You'}</div>
           {msg.content}
         </div>
       </div>
     );
   };
+  
+  const handleCopyLastAI = () => {
+    const lastAI = [...messages].reverse().find(m => m.role === 'assistant');
+    if (lastAI) {
+      navigator.clipboard.writeText(lastAI.content).then(() => {
+        setCopied(true); // ✅ Show modal instead of alert
+      });
+    }
+  };
+  
+  const handleSaveChatPDF = () => {
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 10;
+    const maxLineHeight = 10;
+  
+    let cursorY = margin;
+  
+    messages.forEach(({ role, content }) => {
+      const label = role === 'user' ? 'You:' : 'LeadBot:';
+      const lines = doc.splitTextToSize(`${label} ${content}`, 180);
+  
+      lines.forEach((line) => {
+        if (cursorY + maxLineHeight > pageHeight - margin) {
+          doc.addPage();
+          cursorY = margin;
+        }
+        doc.text(line, margin, cursorY);
+        cursorY += maxLineHeight;
+      });
+  
+      cursorY += 6; // space between messages
+    });
+  
+    doc.save('ChatHistory.pdf');
+  };
+  
 
   return (
     <div className="flex flex-col items-center">
+       
+       {copied && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center  z-[9999]">
+              <div className="bg-white text-center p-8 rounded-3xl shadow-xl w-[90vw] max-w-md text-gray-800 relative">
+                <button
+                  onClick={() => setCopied(false)}
+                  className="absolute top-4 right-4 text-gray-600 hover:text-black text-xl font-bold"
+                  title="Close"
+                >
+                  ✕
+                </button>
+                <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: 'Aclonica, sans-serif' }}>
+                  ✅ Copied to Clipboard!
+                </h3>
+                <p className="text-xl text-gray-700 leading-relaxed">
+                  Your story has been copied successfully. You can now paste it anywhere!
+                </p>
+              </div>
+            </div>
+          )}
+     
       <div className="w-full max-w-[90vw] min-h-[80vh] bg-[#f4f3fd] p-6 md:p-10 rounded-3xl shadow-lg flex flex-col md:flex-row gap-6">
         {/* Character Preview */}
         <div
@@ -92,7 +179,7 @@ const RefineWithAI = () => {
 
         {/* Chat Panel */}
         <div className="flex flex-col items-center flex-1 gap-6">
-          <div className="w-full border-4 border-[#D2BCFA] rounded-3xl bg-white shadow-inner flex flex-col justify-between h-[500px]">
+          <div className="w-full border-4 border-[#D2BCFA] rounded-3xl bg-white shadow-inner flex flex-col justify-between h-[550px]">
             <div className="p-4 overflow-y-auto flex-1">{messages.map((m, i) => renderMessageBubble(m, i))}</div>
 
             {/* Input */}
@@ -115,16 +202,28 @@ const RefineWithAI = () => {
           </div>
 
           {/* Back Button */}
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-2">
             <button
               onClick={() => navigate(-1)}
               className="group relative border-4 border-[#dac3e7] text-[#c996ef] px-6 py-3 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl transition-all duration-200 hover:scale-105 shadow-md"
             >
               ← Back
-              {/* <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-[#FBF6D1] text-[#4B0082] text-sm px-3 py-1 rounded-lg shadow">
-                  Go back to the previous page
-              </span> */}
             </button>
+
+            <button
+              onClick={handleCopyLastAI}
+              className="border-4 border-[#dac3e7] text-[#c996ef] px-6 py-3 rounded-full bg-white hover:bg-[#FBF6D1] font-semibold text-2xl shadow-md transition-all duration-200 hover:scale-105"
+            >
+              📋 Copy Last Reply
+            </button>
+
+            <button
+              onClick={handleSaveChatPDF}
+              className="border-4 border-[#F49097] text-[#F49097] px-6 py-3 rounded-full bg-white hover:bg-[#FDE7EA] font-semibold text-2xl shadow-md transition-all duration-200 hover:scale-105"
+            >
+              📄 Save Chat as PDF
+            </button>
+
           </div>
         </div>
       </div>
